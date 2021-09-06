@@ -1,0 +1,6 @@
+domain: cless.domain
+layout:
+- go.kubebuilder.io/v3
+projectName: test-kube-deployment-webhook
+repo: test-kube-deployment-webhook
+version: "3"
