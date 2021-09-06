@@ -1,3 +1,19 @@
+/*
+Copyright 2021.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package webhook
 
 import (
@@ -15,6 +31,7 @@ import (
 )
 
 var deploymentLog = logf.Log.WithName("deployment-resource")
+
 const (
 	mutatedAnnotation = "test-kube-deployment-webhook-mutated"
 	isMutated         = "isMutated"
@@ -23,7 +40,7 @@ const (
 //+kubebuilder:webhook:path=/mutate-v1-deployment,mutating=true,failurePolicy=fail,groups="",resources=deployments,verbs=create;update,versions=v1,name=mdeployment.kb.io
 
 type deploymentAnnotator struct {
-	Client client.Client
+	Client  client.Client
 	decoder *admission.Decoder
 }
 
@@ -50,7 +67,7 @@ func (d *deploymentAnnotator) Handle(ctx context.Context, request admission.Requ
 		Name:  "initial-test",
 		Image: "busybox",
 		Args:  []string{"bin/bash", "-c", "date; echo Test for initial pod; echo deploy name is $DM_NAME"},
-		Env:   []v1.EnvVar{{
+		Env: []v1.EnvVar{{
 			Name:  "DM_NAME",
 			Value: fmt.Sprintf("%s/%s/%s_%s", dm.GroupVersionKind().Group, dm.APIVersion, dm.Kind, dm.Name),
 		}},
