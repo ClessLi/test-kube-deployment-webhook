@@ -37,7 +37,7 @@ const (
 	isMutated         = "isMutated"
 )
 
-//+kubebuilder:webhook:path=/mutate-v1-deployment,mutating=true,failurePolicy=fail,groups="",resources=deployments,verbs=create;update,versions=v1,name=mdeployment.kb.io
+//+kubebuilder:webhook:path=/mutate-v1-deployment,mutating=true,failurePolicy=fail,groups=apps,resources=deployments,verbs=create;update,versions=v1,name=mdeployment.kb.io
 
 type deploymentAnnotator struct {
 	Client  client.Client
@@ -66,7 +66,7 @@ func (d *deploymentAnnotator) Handle(ctx context.Context, request admission.Requ
 	dm.Spec.Template.Spec.InitContainers = append(dm.Spec.Template.Spec.InitContainers, v1.Container{
 		Name:  "initial-test",
 		Image: "busybox",
-		Args:  []string{"bin/bash", "-c", "date; echo Test for initial pod; echo deploy name is $DM_NAME"},
+		Args:  []string{"/bin/sh", "-c", "date; echo Test for initial pod; echo deploy name is $DM_NAME"},
 		Env: []v1.EnvVar{{
 			Name:  "DM_NAME",
 			Value: fmt.Sprintf("%s/%s/%s_%s", dm.GroupVersionKind().Group, dm.APIVersion, dm.Kind, dm.Name),
@@ -88,5 +88,5 @@ func (d *deploymentAnnotator) InjectDecoder(decoder *admission.Decoder) error {
 }
 
 func RegisterWebhook(mgr manager.Manager) {
-	mgr.GetWebhookServer().Register("mutate-v1-deployment", &webhook.Admission{Handler: &deploymentAnnotator{Client: mgr.GetClient()}})
+	mgr.GetWebhookServer().Register("/mutate-v1-deployment", &webhook.Admission{Handler: &deploymentAnnotator{Client: mgr.GetClient()}})
 }

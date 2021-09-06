@@ -1,0 +1,6 @@
+# 由于未创建CRD的api对象及控制器等，需手动添加该配置
+resources:
+- certificate.yaml
+
+configurations:
+- kustomizeconfig.yaml
